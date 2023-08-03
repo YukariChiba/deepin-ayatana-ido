@@ -17,10 +17,6 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
- #include "config.h"
-#endif
-
 #include <string.h> /* strstr() */
 
 #include <gtk/gtk.h>
@@ -57,7 +53,12 @@ update_timestamp (IdoLocationMenuItem * self)
 
   IdoLocationMenuItemPrivate * priv = ido_location_menu_item_get_instance_private(self);
 
-  tz = g_time_zone_new (priv->timezone);
+  #if GLIB_CHECK_VERSION(2, 68, 0)
+    tz = g_time_zone_new_identifier (priv->timezone);
+  #else
+    tz = g_time_zone_new (priv->timezone);
+  #endif
+
   if (tz == NULL)
     tz = g_time_zone_new_local ();
   date_time = g_date_time_new_now (tz);
